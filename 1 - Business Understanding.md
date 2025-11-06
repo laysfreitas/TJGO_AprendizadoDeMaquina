@@ -8,7 +8,7 @@ status: "Rascunho"
 ---
 
 # 1) Resumo
-Este trabalho avalia métricas e resultados a partir de dados de processos com **datas de distribuição e baixa**, **por entrância, comarca, serventia e área de ação**, para **calcular a taxa de congestionamento anual** e **projetá-la** para **3 meses, 6 meses e 12 meses** em **todas as comarcas do Estado de Goiás**, utilizando **regressão linear** (baseline).
+Este trabalho avalia métricas e resultados a partir de dados de processos com **datas de distribuição e baixa**, **comarca, serventia e área de ação**, para **calcular a taxa de congestionamento mensal** e **projetá-la** para **3 meses, 6 meses e 12 meses** em **todas as comarcas do Estado de Goiás**, utilizando **regressão linear** (baseline).
 
 - **Problema de negócio**: falta de visibilidade futura da taxa de congestionamento por unidade jurisdicional e área de ação.
 - **Entrega principal**: análise do problema, série histórica, taxa anual por recorte, e **previsões 3/6/12 meses** com faixas de confiança.
@@ -17,7 +17,7 @@ Este trabalho avalia métricas e resultados a partir de dados de processos com *
 
 # 2) Contexto do Negócio
 - **Órgão**: Tribunal de Justiça do Estado de Goiás (TJ-GO).
-- **Unidades**: entrâncias, comarcas e serventias (varas/juizados).
+- **Unidades**: comarcas, serventias (varas/juizados) e áreas de ação.
 - **Motivação**: direcionar recursos para reduzir congestionamento e prazos, alinhado a metas estratégicas do tribunal.
 - **Benefícios esperados**: melhor alocação de magistrados/servidores, transparência e previsibilidade.
 
@@ -27,7 +27,7 @@ Este trabalho avalia métricas e resultados a partir de dados de processos com *
 1. **Disponibilizar previsões** da **taxa de congestionamento** para **100% das comarcas** de GO com **erro absoluto médio (MAE) ≤ x p.p.** em validação temporal.
 2. **Identificar as 10 comarcas** com maior **risco de aumento** (tendência > +3 p.p. em 6 meses).
 
-**KPIs primários**: Taxa de congestionamento (anual)
+**KPIs primários**: Taxa de congestionamento (mensal)
 **KPIs secundários**:
 
 ---
@@ -50,7 +50,7 @@ Este trabalho avalia métricas e resultados a partir de dados de processos com *
   **Analítica**: Modelar e prever a taxa por série temporal (baseline: regressão linear sobre tendência/sazonalidade).
 - **Negócio**: Onde focar recursos no curto prazo?  
   **Analítica**: Ranqueamento por **risco de alta** (variação prevista) + **nível atual** (matriz risco × impacto).
-- **Negócio**: A taxa varia por **área de ação**?  
+- **Negócio**: A taxa varia por **área de ação** e/ou por **serventia**?  
   **Analítica**: Cortes por área; análise de heterogeneidade e efeitos sazonais.
 
 ---
@@ -88,7 +88,7 @@ Este trabalho avalia métricas e resultados a partir de dados de processos com *
 ---
 
 # 11) Glossário
-- **Comarca / Serventia / Entrância**: divisões administrativas do TJ .
+- **Comarca / Serventia**: divisões administrativas do TJ .
 - **Área de ação**: agrupamento por natureza/assunto do processo .
 - **Quantidade de Processos Distribuídos**: Essa medida foi obtida através da contagem de datas de entrada dos processos em uma determinada área de ação de uma comarca. A importância de se conhecer essa métrica é que ela permite compreender o volume de demandas que ingressam no sistema judiciário em um determinado período, o que é fundamental para o planejamento e a alocação eficiente de recursos.
 - **Quantidade de Processos Baixados**: A quantidade de processos baixados se refere à contagem de datas de processos que foram dadas baixa em uma área de ação de uma comarca, isto é, reflete o número de processos que foram arquivados em um determinado período, permitindo identificar gargalos e melhorar a eficiência e a produtividade. Portanto, seu conhecimento possibilita a implementação de estratégias especéficas como otimização do fluxo de trabalho, capacitação de servidores ou adoção de tecnologias para automatizar tarefas repetitivas.
