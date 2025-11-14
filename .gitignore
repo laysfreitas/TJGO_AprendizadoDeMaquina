@@ -1,1 +1,4 @@
-/Data
+# Ignorar pastas
+.venv/
+uploads/
+
