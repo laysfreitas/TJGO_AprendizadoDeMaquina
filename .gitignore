@@ -1,4 +1,5 @@
 # Ignorar pastas
 .venv/
 uploads/
+datasets/
 
