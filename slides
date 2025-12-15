@@ -1,0 +1,176 @@
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
+from pptx.dml.color import RGBColor
+
+def create_presentation():
+    # Inicializar apresentação
+    prs = Presentation()
+
+    # Definir cores corporativas (Estilo "Data Science Professional")
+    # Azul Escuro (Titulos), Cinza (Texto), Azul Claro (Destaques)
+    DARK_BLUE = RGBColor(16, 55, 92)
+    LIGHT_BLUE = RGBColor(46, 134, 193)
+    GREY = RGBColor(80, 80, 80)
+
+    # Função auxiliar para criar slides de conteúdo
+    def add_content_slide(title_text, content_text_list):
+        slide_layout = prs.slide_layouts[1] # Title and Content
+        slide = prs.slides.add_slide(slide_layout)
+        
+        # Título
+        title = slide.shapes.title
+        title.text = title_text
+        title.text_frame.paragraphs[0].font.color.rgb = DARK_BLUE
+        title.text_frame.paragraphs[0].font.bold = True
+        
+        # Conteúdo
+        content_box = slide.placeholders[1]
+        tf = content_box.text_frame
+        tf.clear() # Limpar placeholder padrão
+        
+        for item in content_text_list:
+            p = tf.add_paragraph()
+            p.text = item
+            p.font.size = Pt(20)
+            p.font.color.rgb = GREY
+            p.space_after = Pt(14)
+            
+        return slide
+
+    # --- SLIDE 1: CAPA ---
+    slide_layout = prs.slide_layouts[0] # Title Slide
+    slide = prs.slides.add_slide(slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+    
+    title.text = "Projeção da Taxa de Congestionamento\nTribunal de Justiça de Goiás (TJGO)"
+    title.text_frame.paragraphs[0].font.color.rgb = DARK_BLUE
+    title.text_frame.paragraphs[0].font.bold = True
+    
+    subtitle.text = "Abordagem de Machine Learning Supervisionado\nModelo Baseline: Regressão Linear\n\nAutor: Equipe de Ciência de Dados"
+    subtitle.text_frame.paragraphs[0].font.color.rgb = LIGHT_BLUE
+
+    # --- SLIDE 2: O PROBLEMA ---
+    bullets = [
+        "Contexto: O TJGO possui diversas unidades (comarcas e serventias) com volumes variados de processos.",
+        "A Dor: Falta de visibilidade sobre o comportamento futuro do acervo processual.",
+        "Impacto Negativo: Dificuldade em alocar magistrados e servidores de forma preventiva para evitar gargalos.",
+        "Pergunta de Negócio: 'Quais comarcas apresentarão tendência de alta na taxa de congestionamento nos próximos 3, 6 e 12 meses?'"
+    ]
+    add_content_slide("1. O Problema de Negócio", bullets)
+
+    # --- SLIDE 3: SOLUÇÃO PROPOSTA (Metodologia) ---
+    bullets = [
+        "Metodologia: CRISP-DM (Cross-Industry Standard Process for Data Mining).",
+        "Target (Variável Alvo): Taxa de Congestionamento Mensal.",
+        "Fórmula: Pendentes / (Pendentes + Baixados nos últimos 12 meses).",
+        "Abordagem Técnica:",
+        "   - Modelo: Regressão Linear (Baseline).",
+        "   - Granularidade: Modelo individual por Serventia/Comarca.",
+        "   - Horizonte de Previsão: Curto (3 meses), Médio (6 meses) e Longo (12 meses)."
+    ]
+    add_content_slide("2. Solução Proposta & Metodologia", bullets)
+
+    # --- SLIDE 4: PREPARAÇÃO DOS DADOS ---
+    bullets = [
+        "Volume de Dados: ~570 mil registros analisados (Jan/2022 a Out/2025).",
+        "Refinamento (Data Cleaning):",
+        "   - Remoção de CEJUSCs (comportamento atípico/mutirões).",
+        "   - Filtro de estabilidade: Unidades com volume < 10 processos/mês removidas.",
+        "Engenharia de Features:",
+        "   - Transformação de datas em variáveis ordinais.",
+        "   - Split Temporal: Treino (Histórico até Jul/2025) vs. Validação (Ago-Out/2025)."
+    ]
+    add_content_slide("2.1 Preparação e Tratamento dos Dados", bullets)
+
+    # --- SLIDE 5: RESULTADOS (Métricas) ---
+    slide_layout = prs.slide_layouts[1]
+    slide = prs.slides.add_slide(slide_layout)
+    title = slide.shapes.title
+    title.text = "3. Resultados: Performance do Modelo"
+    title.text_frame.paragraphs[0].font.color.rgb = DARK_BLUE
+    
+    # Criar caixas de texto para as métricas com destaque
+    left = Inches(1)
+    top = Inches(2)
+    width = Inches(4)
+    height = Inches(1.5)
+    
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    p = tf.add_paragraph()
+    p.text = "MAE (Erro Médio Absoluto)"
+    p.font.bold = True
+    p.font.size = Pt(24)
+    p.font.color.rgb = DARK_BLUE
+    p2 = tf.add_paragraph()
+    p2.text = "11.86 p.p."
+    p2.font.bold = True
+    p2.font.size = Pt(44)
+    p2.font.color.rgb = LIGHT_BLUE
+    
+    left = Inches(5.5)
+    txBox2 = slide.shapes.add_textbox(left, top, width, height)
+    tf2 = txBox2.text_frame
+    p3 = tf2.add_paragraph()
+    p3.text = "RMSE (Raiz do Erro Quadrático)"
+    p3.font.bold = True
+    p3.font.size = Pt(24)
+    p3.font.color.rgb = DARK_BLUE
+    p4 = tf2.add_paragraph()
+    p4.text = "22.23 p.p."
+    p4.font.bold = True
+    p4.font.size = Pt(44)
+    p4.font.color.rgb = LIGHT_BLUE
+
+    # Texto explicativo abaixo
+    left = Inches(1)
+    top = Inches(4.5)
+    width = Inches(8.5)
+    height = Inches(2)
+    txBox3 = slide.shapes.add_textbox(left, top, width, height)
+    tf3 = txBox3.text_frame
+    p5 = tf3.add_paragraph()
+    p5.text = "Análise: O modelo baseline apresenta um erro médio de aproximadamente 12%. Considerando a alta volatilidade de algumas serventias pequenas, o resultado valida a viabilidade da abordagem para identificar tendências macro."
+    p5.font.size = Pt(18)
+    p5.font.color.rgb = GREY
+
+    # --- SLIDE 6: EXEMPLO DE APLICAÇÃO ---
+    bullets = [
+        "Caso de Uso: 3ª Vara de Família (Goiânia)",
+        "Comportamento Detectado:",
+        "   - Histórico mostra tendência de alta consistente desde 2023.",
+        "   - O modelo capturou a inclinação da curva com precisão na validação.",
+        "Previsão Futura (3 meses):",
+        "   - Projeção de taxa > 97% para o final de 2025.",
+        "   - Ação Recomendada: Priorização imediata de recursos para esta unidade."
+    ]
+    add_content_slide("3.1 Exemplo Real de Aplicação", bullets)
+
+    # --- SLIDE 7: CONCLUSÕES ---
+    bullets = [
+        "Entrega de Valor: Capacidade de prever o congestionamento para 100% das comarcas elegíveis.",
+        "Baseline Sólido: A Regressão Linear provou ser eficaz para capturar tendências claras de alta ou baixa.",
+        "Limitações: O modelo atual tem dificuldade com sazonalidades abruptas ou mudanças drásticas de gestão (ex: mutirões).",
+        "Próximos Passos:",
+        "   1. Testar modelos mais complexos (XGBoost, Prophet) para capturar não-linearidade.",
+        "   2. Incorporar variáveis exógenas (férias forenses, alterações legislativas).",
+        "   3. Implementar Dashboard de monitoramento contínuo."
+    ]
+    add_content_slide("4. Conclusões e Próximos Passos", bullets)
+
+    # --- SLIDE 8: PERGUNTAS ---
+    slide_layout = prs.slide_layouts[2] # Section Header
+    slide = prs.slides.add_slide(slide_layout)
+    title = slide.shapes.title
+    title.text = "Obrigado"
+    
+    text = slide.placeholders[1]
+    text.text = "Dúvidas ou Comentários?"
+
+    # Salvar
+    prs.save('Apresentacao_Resultados_Taxa_Congestionamento.pptx')
+
+if __name__ == "__main__":
+    create_presentation()
